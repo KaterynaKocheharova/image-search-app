@@ -1,0 +1,58 @@
+.header {
+  display: flex;
+  padding-top: var(--medium-gap);
+  padding-bottom: var(--medium-gap);
+  background-color: var(--second-color);
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--small-gap);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.input {
+  padding: 1rem;
+  border-radius: var(--input-and-btn-border-radius);
+  outline: none;
+  border: none;
+  background-color: transparent;
+  border: 1px solid var(--first-color);
+  transition: background-color 250ms linear, border 250ms linear;
+}
+
+.input:focus {
+  border: none;
+  background-color: var(--first-color);
+}
+
+.input::-webkit-input-placeholder {
+  color: var(--first-color);
+  transition: color 250ms linear;
+}
+
+.input:focus::-webkit-input-placeholder {
+  color: var(--second-color);
+}
+
+.button {
+  border: none;
+  padding: 1rem;
+  border-radius: var(--input-and-btn-border-radius);
+  background-color: transparent;
+  border: 1px solid var(--first-color);
+  cursor: pointer;
+  color: var(--first-color);
+  transition: border 250ms linear, background-color 250ms linear,
+    color 250ms linear;
+}
+
+.button:hover,
+.button:focus {
+  border: none;
+  background-color: var(--first-color);
+  transition: background-color 250ms linear, border 250ms linear;
+  color: var(--second-color);
+}

@@ -1,0 +1,15 @@
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  max-width: 95%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--medium-gap);
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}

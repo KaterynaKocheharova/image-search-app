@@ -1,0 +1,22 @@
+.btn {
+  max-width: 200px;
+  margin-right: auto;
+  margin-left: auto;
+  border: none;
+  padding: 1rem;
+  border-radius: var(--input-and-btn-border-radius);
+  background-color: transparent;
+  border: 1px solid var(--second-color);
+  cursor: pointer;
+  color: var(--second-color);
+  transition: border 250ms linear, background-color 250ms linear,
+    color 250ms linear;
+  letter-spacing: 0.03em;
+}
+
+.btn:hover,
+.btn:focus {
+  border: none;
+  background-color: var(--second-color);
+  color: var(--first-color);
+}
