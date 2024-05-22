@@ -5,7 +5,6 @@ import Loader from "./components/Loader/Loader";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMore";
-import ImageModal from "./components/ImageModal/ImageModal";
 import getImages from "./api";
 import handleLoadMoreScroll from "./scroll";
 
@@ -17,20 +16,7 @@ export default function App() {
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [modalData, setModalData] = useState({});
   const galleryItemRef = useRef();
-
-  function openModal(modalData) {
-    setIsOpen(true);
-    document.body.style.overflow = "hidden";
-    setModalData(modalData);
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-    document.body.style.overflow = "visible";
-  }
 
   useEffect(() => {
     async function handleSearch() {
@@ -85,23 +71,12 @@ export default function App() {
           )}
           {isEmpty && <p>No images found! Sorry!</p>}
           {images.length > 0 && (
-            <ImageGallery
-              ref={galleryItemRef}
-              images={images}
-              onOpenModal={openModal}
-            />
+            <ImageGallery ref={galleryItemRef} images={images} />
           )}
           {isLoading && <Loader />}
           {error && <ErrorMessage />}
           {images.length > 0 && !isLoading && currentPage !== totalPages && (
             <LoadMoreBtn onClick={handleLoadMoreBtnClick} />
-          )}
-          {modalIsOpen && (
-            <ImageModal
-              onCloseModal={closeModal}
-              modalIsOpen={modalIsOpen}
-              modalData={modalData}
-            />
           )}
         </Container>
       </main>
