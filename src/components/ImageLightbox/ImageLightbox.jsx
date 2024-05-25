@@ -3,8 +3,8 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 export default function ImageLighbox() {
+  // move state to app + open +  slides
   const [open, setOpen] = useState(false);
-
   return (
     <>
       {/* <button type="button" onClick={() => setOpen(true)}>
