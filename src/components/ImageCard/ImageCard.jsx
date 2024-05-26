@@ -4,14 +4,10 @@ export default function ImageCard({
   imageData: {
     likes,
     description,
-    urls: { small, regular },
+    urls: { small },
   },
-  onOpenModal,
+  openLightbox,
 }) {
-  function handleModalClick() {
-    onOpenModal({ src: regular, alt: description });
-  }
-
   return (
     <>
       <p>Likes: {likes}</p>
@@ -20,7 +16,7 @@ export default function ImageCard({
           className={css.image}
           src={small}
           alt={description}
-          onClick={handleModalClick}
+          onClick={openLightbox}
         />
       </div>
     </>

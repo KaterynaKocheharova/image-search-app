@@ -5,11 +5,14 @@ import Loader from "./components/Loader/Loader";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMore";
+import ImageLighbox from "./components/ImageLightbox/ImageLightbox";
 import getImages from "./api";
 import handleLoadMoreScroll from "./scroll";
 
 export default function App() {
   const [images, setImages] = useState([]);
+  const [lightboxIsOpen, setLightboxIsOpen] = useState(false);
+  const [lightboxSlides, setLightboxSlides] = useState([]);
   const [isEmpty, setIsEmpty] = useState(false);
   const [currentQuery, setCurrentQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +49,11 @@ export default function App() {
   }, [currentQuery, currentPage]);
 
   useEffect(() => {
+    const srcs = images.map(({ urls: { regular } }) => {
+      return { src: `${regular}` };
+    });
+    setLightboxSlides(srcs);
+
     if (currentPage === 1) return;
     handleLoadMoreScroll(galleryItemRef.current);
   }, [images, currentPage]);
@@ -61,6 +69,14 @@ export default function App() {
     setCurrentPage(currentPage + 1);
   }
 
+  function openLightbox() {
+    setLightboxIsOpen(true);
+  }
+
+  function closeLightbox() {
+    setLightboxIsOpen(false);
+  }
+
   return (
     <div>
       <SearchBar onSubmit={handleSubmit} />
@@ -71,41 +87,26 @@ export default function App() {
           )}
           {isEmpty && <p>No images found! Sorry!</p>}
           {images.length > 0 && (
-            <ImageGallery ref={galleryItemRef} images={images} />
+            <ImageGallery
+              ref={galleryItemRef}
+              images={images}
+              openLightbox={openLightbox}
+            />
           )}
           {isLoading && <Loader />}
           {error && <ErrorMessage />}
           {images.length > 0 && !isLoading && currentPage !== totalPages && (
             <LoadMoreBtn onClick={handleLoadMoreBtnClick} />
           )}
+          {lightboxIsOpen && (
+            <ImageLighbox
+              isOpen={lightboxIsOpen}
+              close={closeLightbox}
+              slides={lightboxSlides}
+            />
+          )}
         </Container>
       </main>
     </div>
   );
 }
-
-// import * as React from "react";
-// import Lightbox from "yet-another-react-lightbox";
-// import "yet-another-react-lightbox/styles.css";
-
-// export default function App() {
-//   const [open, setOpen] = React.useState(false);
-
-//   return (
-//     <>
-//       <button type="button" onClick={() => setOpen(true)}>
-//         Open Lightbox
-//       </button>
-
-//       <Lightbox
-//         open={open}
-//         close={() => setOpen(false)}
-//         slides={[
-//           { src: "/image1.jpg" },
-//           { src: "/image2.jpg" },
-//           { src: "/image3.jpg" },
-//         ]}
-//       />
-//     </>
-//   );
-// }
