@@ -17,6 +17,9 @@ export default function ImageLighbox({
         slides={slides}
         index={index}
         on={{ view: ({ index: currentIndex }) => setIndex(currentIndex) }}
+        controller={{
+          closeOnBackdropClick: true,
+        }}
       />
     </>
   );
