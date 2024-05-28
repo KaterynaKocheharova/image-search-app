@@ -11,6 +11,7 @@ import handleLoadMoreScroll from "./scroll";
 
 export default function App() {
   const [images, setImages] = useState([]);
+  const [index, setIndex] = useState(0);
   const [lightboxIsOpen, setLightboxIsOpen] = useState(false);
   const [lightboxSlides, setLightboxSlides] = useState([]);
   const [isEmpty, setIsEmpty] = useState(false);
@@ -69,7 +70,8 @@ export default function App() {
     setCurrentPage(currentPage + 1);
   }
 
-  function openLightbox() {
+  function openLightbox(index) {
+    setIndex(index);
     setLightboxIsOpen(true);
   }
 
@@ -100,6 +102,8 @@ export default function App() {
           )}
           {lightboxIsOpen && (
             <ImageLighbox
+              setIndex={setIndex}
+              index={index}
               isOpen={lightboxIsOpen}
               close={closeLightbox}
               slides={lightboxSlides}

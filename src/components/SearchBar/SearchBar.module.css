@@ -20,7 +20,7 @@
   border: none;
   background-color: transparent;
   border: 1px solid var(--first-color);
-  transition: background-color 250ms linear, border 250ms linear;
+  transition: background-color, border;
 }
 
 .input:focus {
@@ -30,7 +30,7 @@
 
 .input::-webkit-input-placeholder {
   color: var(--first-color);
-  transition: color 250ms linear;
+  transition: color;
 }
 
 .input:focus::-webkit-input-placeholder {
@@ -45,14 +45,12 @@
   border: 1px solid var(--first-color);
   cursor: pointer;
   color: var(--first-color);
-  transition: border 250ms linear, background-color 250ms linear,
-    color 250ms linear;
+  transition: border, background-color, color;
 }
 
 .button:hover,
 .button:focus {
   border: none;
   background-color: var(--first-color);
-  transition: background-color 250ms linear, border 250ms linear;
   color: var(--second-color);
 }

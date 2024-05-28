@@ -7,6 +7,7 @@ export default function ImageCard({
     urls: { small },
   },
   openLightbox,
+  index,
 }) {
   return (
     <>
@@ -16,7 +17,7 @@ export default function ImageCard({
           className={css.image}
           src={small}
           alt={description}
-          onClick={openLightbox}
+          onClick={() => openLightbox(index)}
         />
       </div>
     </>

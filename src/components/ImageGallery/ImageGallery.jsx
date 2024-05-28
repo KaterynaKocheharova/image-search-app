@@ -11,7 +11,11 @@ const ImageGallery = forwardRef(function ImageGallery(
     <ul className={css.list}>
       {images.map((image, index) => (
         <li ref={index === 0 ? ref : null} className={css.card} key={image.id}>
-          <ImageCard imageData={image} openLightbox={openLightbox} />
+          <ImageCard
+            imageData={image}
+            openLightbox={openLightbox}
+            index={index}
+          />
         </li>
       ))}
     </ul>
