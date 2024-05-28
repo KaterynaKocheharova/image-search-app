@@ -20,6 +20,30 @@ export default function ImageLighbox({
         controller={{
           closeOnBackdropClick: true,
         }}
+        render={{
+          slide: ({ slide }) => (
+            <div>
+              <img
+                src={slide.src}
+                alt={slide.alt || ""}
+                style={{ width: "100%", height: "auto" }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "10px",
+                  color: "white",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  padding: "5px",
+                  borderRadius: "5px",
+                }}
+              >
+                Your custom text here
+              </div>
+            </div>
+          ),
+        }}
       />
     </>
   );
