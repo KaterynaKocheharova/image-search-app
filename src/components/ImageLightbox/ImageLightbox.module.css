@@ -1,0 +1,13 @@
+.lightbox :global(.yarl__container) {
+  --yarl__color_backdrop: #403234;
+}
+
+.lightbox :global(.yarl__navigation_prev .yarl__icon),
+.lightbox :global(.yarl__navigation_next .yarl__icon) {
+  height: 50px;
+  width: 50px;
+}
+
+.lightbox :global(.yarl__slide_image) {
+  border-radius: var(--card-border-radius);
+}
