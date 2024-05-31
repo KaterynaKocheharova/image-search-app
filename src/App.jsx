@@ -5,108 +5,62 @@ import Loader from "./components/Loader/Loader";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMore";
-import ImageLighbox from "./components/ImageLightbox/ImageLightbox";
-import getImages from "./api";
+import ImageLightbox from "./components/ImageLightbox/ImageLightbox";
 import handleLoadMoreScroll from "./scroll";
+import useImageSearch from "./hooks/useImageSearch";
+import useLightbox from "./hooks/useLightbox";
 
 export default function App() {
-  const [images, setImages] = useState([]);
-  const [index, setIndex] = useState(0);
-  const [lightboxIsOpen, setLightboxIsOpen] = useState(false);
-  const [lightboxSlides, setLightboxSlides] = useState([]);
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [currentQuery, setCurrentQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   const galleryItemRef = useRef();
 
-  useEffect(() => {
-    async function handleSearch() {
-      try {
-        if (currentQuery !== "") {
-          setIsLoading(true);
-          setError(false);
-          const imageData = await getImages(currentQuery, currentPage);
-          if (!imageData.results.length) {
-            setIsEmpty(true);
-            return;
-          }
-          if (currentPage === 1) {
-            setTotalPages(imageData.total_pages);
-          }
-          setImages((prevImages) => [...prevImages, ...imageData.results]);
-        }
-      } catch (error) {
-        console.error(error);
-        setError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    handleSearch();
-  }, [currentQuery, currentPage]);
+  const { images, isEmpty, totalPages, isLoading, error } = useImageSearch(
+    query,
+    page
+  );
+  const { isOpen, index, slides, open, close, setIndex } = useLightbox(images);
 
   useEffect(() => {
-    const srcs = images.map(({ urls: { regular } }) => {
-      return { src: `${regular}` };
-    });
-    setLightboxSlides(srcs);
-
-    if (currentPage === 1) return;
+    if (page === 1) return;
     handleLoadMoreScroll(galleryItemRef.current);
-  }, [images, currentPage]);
+  }, [images, page]);
 
-  function handleSubmit(query) {
-    setIsEmpty(false);
-    setCurrentQuery(query);
-    setCurrentPage(1);
-    setImages([]);
-  }
+  const handleSearchSubmit = (newQuery) => {
+    setQuery(newQuery);
+    setPage(1);
+  };
 
-  function handleLoadMoreBtnClick() {
-    setCurrentPage(currentPage + 1);
-  }
-
-  function openLightbox(index) {
-    setIndex(index);
-    setLightboxIsOpen(true);
-  }
-
-  function closeLightbox() {
-    setLightboxIsOpen(false);
-  }
+  const handleLoadMoreClick = () => setPage(page + 1);
 
   return (
     <div>
-      <SearchBar onSubmit={handleSubmit} />
+      <SearchBar onSubmit={handleSearchSubmit} />
       <main>
         <Container notHeader>
           {!images.length && !isLoading && !isEmpty && (
-            <p>Let's begin search!🤗</p>
+            <p>Let&apos;s begin search!🤗</p>
           )}
           {isEmpty && <p>No images found! Sorry!</p>}
           {images.length > 0 && (
             <ImageGallery
               ref={galleryItemRef}
               images={images}
-              openLightbox={openLightbox}
+              openLightbox={open}
             />
           )}
           {isLoading && <Loader />}
           {error && <ErrorMessage />}
-          {images.length > 0 && !isLoading && currentPage !== totalPages && (
-            <LoadMoreBtn onClick={handleLoadMoreBtnClick} />
+          {images.length > 0 && !isLoading && page !== totalPages && (
+            <LoadMoreBtn onClick={handleLoadMoreClick} />
           )}
-          {lightboxIsOpen && (
-            <ImageLighbox
+          {isOpen && (
+            <ImageLightbox
               setIndex={setIndex}
               index={index}
-              isOpen={lightboxIsOpen}
-              close={closeLightbox}
-              slides={lightboxSlides}
+              isOpen={isOpen}
+              close={close}
+              slides={slides}
             />
           )}
         </Container>
