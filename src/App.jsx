@@ -6,53 +6,95 @@ import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMore";
 import ImageLightbox from "./components/ImageLightbox/ImageLightbox";
+import getImages from "./api";
 import handleLoadMoreScroll from "./scroll";
-import useImageSearch from "./hooks/useImageSearch";
-import useLightbox from "./hooks/useLightbox";
 
 export default function App() {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const galleryItemRef = useRef();
+  // IMAGES STATES
+  const [images, setImages] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [currentQuery, setCurrentQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const { images, isEmpty, totalPages, isLoading, error } = useImageSearch(
-    query,
-    page
-  );
-  const { isOpen, index, slides, open, close, setIndex } = useLightbox(images);
+  // LIGHBOX STATES
+  const [isOpen, setIsOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const slides = images.map(({ urls: { regular } }) => ({ src: regular }));
 
-  useEffect(() => {
-    if (page === 1) return;
-    handleLoadMoreScroll(galleryItemRef.current);
-  }, [images, page]);
+  // LIGHBOX FUNCTIONS
 
-  const handleSearchSubmit = (newQuery) => {
-    setQuery(newQuery);
-    setPage(1);
+  const open = (index) => {
+    setIndex(index);
+    setIsOpen(true);
   };
 
-  const handleLoadMoreClick = () => setPage(page + 1);
+  const close = () => setIsOpen(false);
+
+  const galleryItemRef = useRef();
+
+  useEffect(() => {
+    async function handleSearch() {
+      try {
+        if (currentQuery !== "") {
+          setIsLoading(true);
+          setError(false);
+          const imageData = await getImages(currentQuery, currentPage);
+          if (!imageData.results.length) {
+            setIsEmpty(true);
+            return;
+          }
+          if (currentPage === 1) {
+            setTotalPages(imageData.total_pages);
+          }
+          setImages((prevImages) => [...prevImages, ...imageData.results]);
+        }
+      } catch (error) {
+        console.error(error);
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    handleSearch();
+  }, [currentQuery, currentPage]);
+
+  // SMOOTH SCROLLING
+  useEffect(() => {
+    if (currentPage === 1) return;
+    handleLoadMoreScroll(galleryItemRef.current);
+  }, [images, currentPage]);
+
+  // SEARCHING FOR THE FIRST TIME
+  function handleSubmit(query) {
+    setIsEmpty(false);
+    setCurrentQuery(query);
+    setCurrentPage(1);
+    setImages([]);
+  }
+
+  // LOAD MORE
+  function handleLoadMoreBtnClick() {
+    setCurrentPage(currentPage + 1);
+  }
 
   return (
     <div>
-      <SearchBar onSubmit={handleSearchSubmit} />
+      <SearchBar onSubmit={handleSubmit} />
       <main>
         <Container notHeader>
-          {!images.length && !isLoading && !isEmpty && (
-            <p>Let&apos;s begin search!🤗</p>
-          )}
+          {!images.length && !isEmpty && <p>Let's begin search!🤗</p>}
           {isEmpty && <p>No images found! Sorry!</p>}
           {images.length > 0 && (
-            <ImageGallery
-              ref={galleryItemRef}
-              images={images}
-              openLightbox={open}
-            />
+            <ImageGallery ref={galleryItemRef} images={images} openLightbox={open} />
           )}
           {isLoading && <Loader />}
           {error && <ErrorMessage />}
-          {images.length > 0 && !isLoading && page !== totalPages && (
-            <LoadMoreBtn onClick={handleLoadMoreClick} />
+          {images.length > 0 && !isLoading && currentPage !== totalPages && (
+            <LoadMoreBtn onClick={handleLoadMoreBtnClick} />
           )}
           {isOpen && (
             <ImageLightbox

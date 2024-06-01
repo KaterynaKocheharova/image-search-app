@@ -4,7 +4,7 @@ import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/styles.css";
 import css from "./ImageLightbox.module.css";
 
-export default function ImageLighbox({
+export default function ImageLightbox({
   isOpen,
   close,
   slides,
