@@ -24,8 +24,7 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const slides = images.map(({ urls: { regular } }) => ({ src: regular }));
 
-  // LIGHBOX FUNCTIONS
-
+  // OPEN AND CLOSE LIGHTBOX
   const open = (index) => {
     setIndex(index);
     setIsOpen(true);
@@ -33,42 +32,7 @@ export default function App() {
 
   const close = () => setIsOpen(false);
 
-  const galleryItemRef = useRef();
-
-  useEffect(() => {
-    async function handleSearch() {
-      try {
-        if (currentQuery !== "") {
-          setIsLoading(true);
-          setError(false);
-          const imageData = await getImages(currentQuery, currentPage);
-          if (!imageData.results.length) {
-            setIsEmpty(true);
-            return;
-          }
-          if (currentPage === 1) {
-            setTotalPages(imageData.total_pages);
-          }
-          setImages((prevImages) => [...prevImages, ...imageData.results]);
-        }
-      } catch (error) {
-        console.error(error);
-        setError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    handleSearch();
-  }, [currentQuery, currentPage]);
-
-  // SMOOTH SCROLLING
-  useEffect(() => {
-    if (currentPage === 1) return;
-    handleLoadMoreScroll(galleryItemRef.current);
-  }, [images, currentPage]);
-
-  // SEARCHING FOR THE FIRST TIME
+  // SEARCHING FIRST QUERY
   function handleSubmit(query) {
     setIsEmpty(false);
     setCurrentQuery(query);
@@ -81,15 +45,54 @@ export default function App() {
     setCurrentPage(currentPage + 1);
   }
 
+  // FETCHING DATA
+  useEffect(() => {
+    async function handleSearch() {
+      setIsLoading(true);
+      setError(false);
+      try {
+        if (currentQuery === "") return;
+        const imageData = await getImages(currentQuery, currentPage);
+        if (!imageData.results.length) {
+          setIsEmpty(true);
+          return;
+        }
+        if (currentPage === 1) {
+          setTotalPages(imageData.total_pages);
+        }
+        setImages((prevImages) => [...prevImages, ...imageData.results]);
+      } catch (error) {
+        console.error(error);
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    handleSearch();
+  }, [currentQuery, currentPage]);
+
+  // SMOOTH SCROLLING
+  const galleryItemRef = useRef();
+
+  useEffect(() => {
+    if (currentPage === 1) return;
+    handleLoadMoreScroll(galleryItemRef.current);
+  }, [images, currentPage]);
+
   return (
     <div>
       <SearchBar onSubmit={handleSubmit} />
       <main>
         <Container notHeader>
-          {!images.length && !isEmpty && <p>Let's begin search!🤗</p>}
+          {!images.length && !isEmpty && !isLoading && <p>Let's begin search!🤗</p>}
           {isEmpty && <p>No images found! Sorry!</p>}
           {images.length > 0 && (
-            <ImageGallery ref={galleryItemRef} images={images} openLightbox={open} />
+            <ImageGallery
+              ref={galleryItemRef}
+              images={images}
+              openLightbox={open}
+            />
           )}
           {isLoading && <Loader />}
           {error && <ErrorMessage />}
