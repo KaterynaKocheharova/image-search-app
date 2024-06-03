@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Container from "./components/Container/Container";
 import SearchBar from "./components/SearchBar/SearchBar";
 import Loader from "./components/Loader/Loader";
@@ -22,7 +22,10 @@ export default function App() {
   // LIGHBOX STATES
   const [isOpen, setIsOpen] = useState(false);
   const [index, setIndex] = useState(0);
-  const slides = images.map(({ urls: { regular } }) => ({ src: regular }));
+  const slides = useMemo(
+    () => images.map(({ urls: { regular } }) => ({ src: regular })),
+    [images]
+  );
 
   // OPEN AND CLOSE LIGHTBOX
   const open = (index) => {
@@ -78,14 +81,16 @@ export default function App() {
   useEffect(() => {
     if (currentPage === 1) return;
     handleLoadMoreScroll(galleryItemRef.current);
-  }, [images, currentPage]);
+  }, [images, currentPage, isEmpty]);
 
   return (
     <div>
       <SearchBar onSubmit={handleSubmit} />
       <main>
         <Container notHeader>
-          {!images.length && !isEmpty && !isLoading && <p>Let's begin search!🤗</p>}
+          {!images.length && !isEmpty && !isLoading && (
+            <p>Let&#39;s begin search!🤗</p>
+          )}
           {isEmpty && <p>No images found! Sorry!</p>}
           {images.length > 0 && (
             <ImageGallery
